@@ -10,7 +10,8 @@
 
 	$userIsLogged = users_isLogged();
 	$loginURL     = presentation_user_login();
-	if( !$userIsLogged && $GLOBALS['w.currentURL'] != $loginURL ){
+	$registerURL  = presentation_user_register(isset($_GET['invitation']) ? $_GET['invitation'] : false);
+	if( !$userIsLogged && ($GLOBALS['w.currentURL'] != $loginURL && $GLOBALS['w.currentURL'] != $registerURL ) ){
 		common_r($loginURL);
 		return false;
 	}
