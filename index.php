@@ -33,7 +33,6 @@
 	/* INI-dispatcher */
 	chdir('resources/libs/');
 	$controllersBase = '../controllers/';
-	include_once('../init.php');
 	do{
 		/* Get pagination if any */
 		$d = 0;while(preg_match('/page\/([0-9]+)$/',$params,$m) && ++$d){
@@ -70,6 +69,7 @@
 	/* END-template */
 
 	$t = microtime(1);
+	include_once('../init.php');
 	$r = call_user_func_array($command,$params);
 	echo $GLOBALS['inc']['common']['output'];
 	$totalTime = microtime(1)-$t;

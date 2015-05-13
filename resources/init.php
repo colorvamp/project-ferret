@@ -9,8 +9,9 @@
 	common_setBase('base');
 
 	$userIsLogged = users_isLogged();
-	if( !$userIsLogged && ( $command != 'u_login' && $command != 'u_register' ) ){
-		common_r($GLOBALS['w.indexURL'].'/u/login');
+	$loginURL     = presentation_user_login();
+	if( !$userIsLogged && $GLOBALS['w.currentURL'] != $loginURL ){
+		common_r($loginURL);
 		return false;
 	}
 
