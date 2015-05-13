@@ -10,3 +10,7 @@
 	function presentation_task_save_url($projectOB = []){
 		return $GLOBALS['w.indexURL'].'/t/save/'.$projectOB['_id'];
 	}
+
+	function presentation_user_login($projectOB = []){
+		return $GLOBALS['w.indexURL'].'/u/login';
+	}
