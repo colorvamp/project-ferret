@@ -100,9 +100,9 @@
 		if($userMail && $userCode){do{
 			$userMail = preg_replace($GLOBALS['api']['users']['reg.mail.clear'],'',$userMail);
 			if( !($userOB = users_getByMail($userMail)) ){break;}
-			if($userOB['userCode'] != $userCode){break;}
+			if( !isset($userOB['userCode'][$userCode]) ){break;}
 			$userOB['userStatus'] = 1;
-			$userOB['userCode']   = users_generateCode($userMail);
+			$userOB['userCode']   = [users_generateCode($userMail)=>time()];
 			$r = users_save($userOB);
 			if( isset($r['errorDescription']) ){print_r($r);exit;}
 			users_impersonate($userOB);
