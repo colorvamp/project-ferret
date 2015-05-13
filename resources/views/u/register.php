@@ -2,7 +2,7 @@
 	<section>
 		<header>
 			<h2>Registro de usuario</h2>
-			<p>Bienvenido a hotelvamp!</p>
+			<p>Bienvenido a ferret</p>
 		</header>
 		<div class="wrapper timeline">
 			<p>

@@ -48,6 +48,7 @@
 	}
 
 	function u_register($invitation = ''){
+		if( isset($_GET['invitation']) ){$invitation = $_GET['invitation'];}
 		if( !$invitation ){common_r('',404);}
 		$file = '../db/invitations/'.preg_replace('/[^a-z0-9]/','',$invitation);
 		if( !file_exists($file) ){common_r('',404);}
@@ -77,14 +78,14 @@
 					default:print_r($r);exit;
 				}}
 
-				$r = mail_send('info@hotelvamp.com',[
+				/*$r = mail_send('info@ferret.com',[
 					 'to'=>$userOB['userMail']
 					,'subject'=>'Confirmación de usuario'
 					,'body'=>common_loadSnippet('u/mail/confirm',[ 'userOB'=>$userOB,'w.indexURL'=>$GLOBALS['w.indexURL'] ])
 					,'files'=>[
 						//El logo
 					]
-				]);
+				]);*/
 
 				unlink($file);
 				common_r('?confirm=1');
@@ -146,14 +147,14 @@
 
 				include_once('api.mail.php');
 
-				$r = mail_send('info@hotelvamp.com',[
+				/*$r = mail_send('info@ferret.com',[
 					 'to'=>$userOB['userMail']
 					,'subject'=>'Recordar contraseña'
 					,'body'=>common_loadSnippet('u/mail/remember',[ 'userOB'=>$userOB,'w.indexURL'=>$GLOBALS['w.indexURL'] ])
 					,'files'=>[
 						//El logo
 					]
-				]);
+				]);*/
 
 				common_r('?sent=1');
 		}}

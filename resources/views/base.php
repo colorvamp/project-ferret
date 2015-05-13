@@ -16,7 +16,7 @@
 			<ul class='top-menu'>
 				<li>Help</li>
 				<li>{%user_userName%}'s Account</li>
-				<li>Logout</li>
+				<li><a href="{%w.indexURL%}/u/logout">Logout</a></li>
 			</ul>
 		</div>
 		<div class="top-info">
