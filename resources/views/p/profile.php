@@ -31,18 +31,16 @@
 		</header>
 		<div>
 			{%#taskOBs%}
-				<div class="box">
-					<h3 class="dropdown-toggle"><i class="fa fa-plus"></i> {%taskName%}
-						<div class="dropdown-menu padded">
-							<h4><i class="fa fa-plus"></i> Opciones</h4>
-							<p>Opciones de la tarea.</p>
-							<div class="btn-group">
-								<div class="btn btn-close">Cerrar</div>
-							</div>
+				<div class="node">
+					<div class="image s32">
+						<i>{%taskPriority%}</i>
+					</div>
+					<div class="wrapper">
+						<h4><a href="{%url.task%}">{%taskName%}</a></h4>
+						<p>{%taskDescription%}</p>
+						<div class="btn-group clean">
+							<a class="btn" href="{%url.task%}"><i class="fa fa-eye"></i> Ver</a>
 						</div>
-					</h3>
-					<div>
-						<a href="{%url.task%}">Ver</a>
 					</div>
 				</div>
 			{%/taskOBs%}

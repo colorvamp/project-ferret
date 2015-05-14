@@ -27,7 +27,7 @@
 				common_r();
 		}}
 
-		$taskOBs = $taskTB->getWhere(['taskProjectID'=>$projectOB['_id']]);
+		$taskOBs = $taskTB->getWhere(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open']);
 		foreach( $taskOBs as &$taskOB ){
 			$taskOB['url.task'] = presentation_task_url($taskOB);
 		}

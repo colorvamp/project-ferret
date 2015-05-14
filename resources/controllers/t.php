@@ -2,6 +2,7 @@
 	if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
 		case 'task.save':
 			if( !isset($_POST['_id']) ){common_r();}
+			include_once('inc.common.php');
 			include_once('api.project.php');
 			$taskTB = new taskTB();
 			if( !($taskOB = $taskTB->getByID($_POST['_id'])) ){common_r();}
