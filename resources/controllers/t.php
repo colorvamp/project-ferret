@@ -2,13 +2,39 @@
 	if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
 		case 'task.save':
 			if( !isset($_POST['_id']) ){common_r();}
+			include_once('api.users.mongo.php');
+			include_once('inc.presentation.php');
+			users_isLogged();
 			include_once('inc.common.php');
 			include_once('api.project.php');
-			$taskTB = new taskTB();
+			$mailAssign = false;
+
+			$taskTB    = new taskTB();
 			if( !($taskOB = $taskTB->getByID($_POST['_id'])) ){common_r();}
 			$_POST['_id'] = $taskOB['_id'];
-			$taskOB = $taskTB->save($_POST);
-			if( isset($taskOB['errorDescription']) ){print_r($taskOB);exit;}
+			if( isset($_POST['taskAssign']) ){
+				$_POST['taskUser']['assigned'] = $_POST['taskAssign'];
+				$mailAssign = true;
+			}
+
+			$r = $taskTB->save($_POST);
+			if( isset($r['errorDescription']) ){print_r($r);exit;}
+			$taskOB = $_POST;
+
+			if( $mailAssign && ($userOB = users_getByID($_POST['taskUser']['assigned'])) ){
+				include_once('api.mailing.php');
+				/* INI-Envio de correo */
+				$taskOB['url.task'] = presentation_task_url($taskOB);
+				$config = json_decode(file_get_contents('../db/mail.json'),1);
+				$blob   = common_loadSnippet('mail/es.mail.task.assign',[ 'taskOB'=>$taskOB ]);
+				$subj   = 'Asignación de tareas';
+				$r = mailing_send($config+[
+					 'to'=>$userOB['userMail']
+				],$subj,$blob);
+				if( isset($r['errorDescription']) ){print_r($r);exit;}
+				/* END-Envio de correo */
+			}
+
 			common_r();
 	}}
 
@@ -40,12 +66,19 @@
 				common_r();
 		}}
 
-		$userOBs = users_getWhere(['_id'=>['$in'=>[
-			 $taskOB['taskUser']['created']
-		]]]);
+		$userIDs = array_keys($projectOB['projectUsers']);
+		if( isset($taskOB['taskUser']['created']) ){$userIDs[] = $taskOB['taskUser']['created'];}
+		if( isset($taskOB['taskUser']['assigned']) ){$userIDs[] = $taskOB['taskUser']['assigned'];}
 
-		if( isset($userOBs[strval($taskOB['taskUser']['created'])]) ){
-			$taskOB['html.user'] = '<a href="">'.$userOBs[strval($taskOB['taskUser']['created'])]['userName'].'</a>'.PHP_EOL;
+		$userIDs = array_unique($userIDs);
+		$userOBs = users_getByIDs($userIDs);
+		$TEMPLATE['userOBs'] = $userOBs;
+
+		if( isset($taskOB['taskUser']['created'],$userOBs[strval($taskOB['taskUser']['created'])]) ){
+			$taskOB['html.user.created'] = '<a href="">'.$userOBs[strval($taskOB['taskUser']['created'])]['userName'].'</a>'.PHP_EOL;
+		}
+		if( isset($taskOB['taskUser']['assigned'],$userOBs[strval($taskOB['taskUser']['assigned'])]) ){
+			$taskOB['html.user.assigned'] = '<a href="">'.$userOBs[strval($taskOB['taskUser']['assigned'])]['userName'].'</a>'.PHP_EOL;
 		}
 
 		//FIXME: el paginador

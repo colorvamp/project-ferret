@@ -56,9 +56,20 @@
 			if( !isset($data['taskPriority']) ){$data['taskPriority'] = 1;}
 			if( !isset($data['taskStatus']) ){$data['taskStatus'] = 'open';}
 			if( !isset($data['taskTags']) ){$data['taskTags'] = [];}
+			if( !isset($data['taskUser']['assigned']) ){$data['taskUser']['assigned'] = false;}
 			if( !isset($data['taskUser']['created']) && isset($GLOBALS['user']['_id']) ){
 				$data['taskUser']['created'] = $GLOBALS['user']['_id'];
 			}
+
+			if( strval($data['taskUser']['assigned']) != strval($oldData['taskUser']['assigned']) ){
+				include_once('api.users.mongo.php');
+				$projectTB = new projectTB();
+				$projectOB = $projectTB->getByID($data['taskProjectID']);
+				$userID    = strval($data['taskUser']['assigned']);
+				if( !isset($projectOB['projectUsers'][$userID]) ){return ['errorDescription'=>'ASSIGN_ERROR','file'=>__FILE__,'line'=>__LINE__];}
+				$data['taskUser']['assigned'] = new MongoId($userID);
+			}
+			if( is_string($data['taskUser']['assigned']) ){$data['taskUser']['assigned'] = new MongoId($data['taskUser']['assigned']);}
 			return $data;
 		}
 	}

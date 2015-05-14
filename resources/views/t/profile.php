@@ -28,7 +28,30 @@
 						</div>
 					</div>
 				</li>
-				<li><div><i class="fa fa-user"></i></div><div>por: {%taskOB_html.user%}</div></li>
+				<li><div><i class="fa fa-user"></i></div><div>por: {%taskOB_html.user.created%}</div></li>
+				<li><div><i class="fa fa-user"></i></div><div>asignado:
+						<div class="inline-block dropdown-toggle">{%taskOB_html.user.assigned%} <i class="fa fa-caret-down"></i>
+							<div class="dropdown-menu padded">
+								<h4><i class="fa fa-check"></i> Asignar tarea a usuario</h4>
+								<p>Asignar tarea a usuario.</p>
+								<form method="post">
+									<input type="hidden" name="subcommand" value="task.save">
+									<input type="hidden" name="_id" value="{%taskOB__id%}">
+									<select name="taskAssign">
+										<option value="">Sin asignar</option>
+										{%#userOBs%}
+										<option value="{%_id%}">{%userName%}</option>
+										{%/userOBs%}
+									</select>
+									<div class="btn-group right">
+										<div class="btn btn-close">Cerrar</div>
+										<button class="btn"><i class="fa fa-save"></i> Salvar</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</li>
 				<li><div><i class="fa fa-tags"></i></div>
 					<div>tags:
 						{%#taskOB_taskTags%}
