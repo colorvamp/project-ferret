@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>{%BLOG.TITLE%}</title>
+	<title>{%PAGE.TITLE%}</title>
 	{%META.OG.IMAGE%}
 	<link href="{%w.indexURL%}/r/css/index.css" rel="stylesheet"/>
 	<link href="{%w.indexURL%}/r/css/font-awesome.min.css" rel="stylesheet"/>

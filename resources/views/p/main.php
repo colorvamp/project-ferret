@@ -1,10 +1,14 @@
 	<section class="padding">
+		<div class="btn-group">
+			<a class="btn" href="{%w.indexURL%}/p/save">Nuevo proyecto</a>
+		</div>
+		<ul class="table">
 		{%#projectOBs%}
-			<div class="box">
-				<h3>{%projectName%}</h3>
+			<li>
 				<div>
-					<a href="{%url.project%}">Ver</a>
+					<h3><a href="{%url.project%}">{%projectName%}</a></h3>
 				</div>
-			</div>
+			</li>
 		{%/projectOBs%}
+		</ult>
 	</section>

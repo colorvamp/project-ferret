@@ -36,7 +36,7 @@
 				$data['projectNameFixed'] = strings_toURL($data['projectName']);
 			}
 			if( !isset($data['projectUsers']) && isset($GLOBALS['user']['_id']) ){
-				$data['projectUsers'][$GLOBALS['user']['_id']] = 'admin';
+				$data['projectUsers'][strval($GLOBALS['user']['_id'])] = 'admin';
 			}
 			return $data;
 		}

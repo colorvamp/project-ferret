@@ -69,8 +69,7 @@
 
 		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
 			case 'user.register':
-				include_once('api.mail.php');
-				//$userOB = users_getByID('548ee8643dfa6cf1258b4567');
+				include_once('api.mailing.php');
 
 				if(!isset($_POST['userPass']) || !isset($_POST['userPassR']) || $_POST['userPass'] != $_POST['userPassR']){echo 'passwords mismatch';exit;}
 				$userOB = users_save($_POST);if(isset($userOB['errorDescription'])){switch($userOB['errorDescription']){
@@ -78,14 +77,18 @@
 					default:print_r($r);exit;
 				}}
 
-				/*$r = mail_send('info@ferret.com',[
+				/* INI-Envio de correo */
+				$rep  = [
+					'confirm.url'=>$GLOBALS['w.indexURL'].'/u/confirm/'.$userOB['userMail'].'/'.key($userOB['userCode'])
+				];
+				$config = json_decode(file_get_contents('../db/mail.json'),1);
+				$blob   = common_loadSnippet('mail/es.mail.confirm',$rep);
+				$subj   = 'Confirmación de usuario';
+				$r = mailing_send($config+[
 					 'to'=>$userOB['userMail']
-					,'subject'=>'Confirmación de usuario'
-					,'body'=>common_loadSnippet('u/mail/confirm',[ 'userOB'=>$userOB,'w.indexURL'=>$GLOBALS['w.indexURL'] ])
-					,'files'=>[
-						//El logo
-					]
-				]);*/
+				],$subj,$blob);
+				if( isset($r['errorDescription']) ){print_r($r);exit;}
+				/* END-Envio de correo */
 
 				unlink($file);
 				common_r('?confirm=1');

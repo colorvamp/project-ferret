@@ -17,7 +17,7 @@
 									<select name="taskStatus">
 										<option value="open">Abierta</option>
 										<option value="patch">Parche disponible</option>
-										<option value="close">Cerrada</option>
+										<option value="closed">Cerrada</option>
 									</select>
 									<div class="btn-group right">
 										<div class="btn btn-close">Cerrar</div>
