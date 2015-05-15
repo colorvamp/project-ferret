@@ -1,10 +1,11 @@
 <?php
 	function p_main($id = false){
 		if( $id ){return p_profile($id);}
-		$TEMPLATE = &$GLOBALS['TEMPLATE'];
+		$TEMPLATE  = &$GLOBALS['TEMPLATE'];
 		$projectTB = new projectTB();
+		$userID    = strval($GLOBALS['user']['_id']);
 
-		$projectOBs = $projectTB->getWhere();
+		$projectOBs = $projectTB->getWhere(['projectUsers.'.$userID=>['$exists'=>true]]);
 		foreach( $projectOBs as &$projectOB ){
 			$projectOB['url.project'] = presentation_project_url($projectOB);
 		}

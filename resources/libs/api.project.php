@@ -70,6 +70,15 @@
 				$data['taskUser']['assigned'] = new MongoId($userID);
 			}
 			if( is_string($data['taskUser']['assigned']) ){$data['taskUser']['assigned'] = new MongoId($data['taskUser']['assigned']);}
+
+
+			/* INI-Convertimos el texto a markdown */
+			if( isset($data['taskDescription']) && strpos($data['taskDescription'],'<') === false ){
+				if(!function_exists('markdown_toHTML')){include_once('inc.markdown.php');}
+				$data['taskDescription'] = markdown_toHTML($data['taskDescription']);
+				$data['taskDescription'] = trim($data['taskDescription']);
+			}
+			/* END-Convertimos el texto a markdown */
 			return $data;
 		}
 	}
