@@ -6,7 +6,7 @@
 	],$GLOBALS['api']['mongo']);
 
 	class _mongo{
-		public $db     = 'hotelvamp';
+		public $db     = 'projectferret';
 		public $server = 'db';
 		public $table  = '';
 		public $otable = '';
