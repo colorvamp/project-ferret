@@ -51,6 +51,7 @@
 				$data['taskNameFixed'] = strings_toURL($data['taskName']);
 			}
 			if( isset($data['taskTags']) && is_string($data['taskTags']) ){$data['taskTags'] = array_unique(array_diff(explode(',',$data['taskTags']),['']));}
+			if( isset($data['taskUser'],$oldData['taskUser']) ){$data['taskUser'] = $data['taskUser']+$oldData['taskUser'];}
 
 			if( !isset($data['taskStamp']) ){$data['taskStamp'] = time();}
 			if( !isset($data['taskPriority']) ){$data['taskPriority'] = 1;}
@@ -62,6 +63,9 @@
 			}
 
 			if( strval($data['taskUser']['assigned']) != strval($oldData['taskUser']['assigned']) ){
+				/* Si se lo asignamos a una persona tenemos que comprobar que 
+				 * tiene algunos permisos sobre el proyecto en el que se 
+				 * está trabajando */
 				include_once('api.users.mongo.php');
 				$projectTB = new projectTB();
 				$projectOB = $projectTB->getByID($data['taskProjectID']);
