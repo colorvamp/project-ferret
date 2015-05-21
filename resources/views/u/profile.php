@@ -1,3 +1,10 @@
+	<section class="padding">
+		<header>
+			<h2>{%user_userName%}</h2>
+			<p>Perfil de usuario</p>
+		</header>
+	</section>
+
 <main>
 	<header>
 		<div class="image"></div>

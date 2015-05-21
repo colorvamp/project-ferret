@@ -15,7 +15,7 @@
 			<img src='{%w.indexURL%}/r/images/colorvampLogoSimpleWhite.png' style='float:left;margin:7px 15px;'/>
 			<ul class='top-menu'>
 				<li>Help</li>
-				<li>{%user_userName%}'s Account</li>
+				<li><a href="{%w.indexURL%}/u/me">{%user_userName%}'s Account</a></li>
 				<li><a href="{%w.indexURL%}/u/logout">Logout</a></li>
 			</ul>
 		</div>

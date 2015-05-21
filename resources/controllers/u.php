@@ -5,20 +5,32 @@
 
 	function u_profile($userName = ''){
 		if( !users_isLogged() ){common_r('',404);}
-		//FIXME: cada uno solo debe poder entrar en su perfil realmente
 		$TEMPLATE = &$GLOBALS['TEMPLATE'];
-		include_once('api.profiles.php');
-		$profileTB = new profileTB();
 
-		/* Vamos a detectar si este usuario tiene algún perfil configurado */
-		$profilesCount = $profileTB->count(['profileUsers.'.strval($GLOBALS['user']['_id'])=>['$exists'=>true]]);
-		$TEMPLATE['html.profile.create'] = '';
-		if( !$profilesCount ){
-			$TEMPLATE['html.profile.create'] = common_loadSnippet('profile/snippets/profile.create');
-		}
 
 		$TEMPLATE['PAGE.TITLE'] = 'Perfil de usuario';
 		common_renderTemplate('u/profile');
+	}
+
+	function u_me(){
+		if( !users_isLogged() ){common_r('',404);}
+		$TEMPLATE = &$GLOBALS['TEMPLATE'];
+
+		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
+			case 'mail.change':
+				if( !isset($_POST['userMail']) ){common_r();}
+				/* Si el usuario por el que queremos cambiar ya está registrado
+				 * en el sistema no podemos cambiarlo, mejor que recupere la 
+				 * contraseña desde ese otro usuario */
+				if( $userOB = users_getByMail($_POST['userMail']) ){common_r();}
+				$r = users_save(['userMail'=>$_POST['userMail']]+$GLOBALS['user']);
+				//FIXME: reenviar correo de confirmación
+				common_r();
+		}}
+
+
+		$TEMPLATE['PAGE.TITLE'] = 'Perfil de usuario';
+		common_renderTemplate('u/profile.me');
 	}
 
 	function u_login(){

@@ -11,6 +11,7 @@
 		}
 
 		$TEMPLATE['projectOBs'] = $projectOBs;
+		$TEMPLATE['PAGE.TITLE'] = 'Listado de proyectos';
 		return common_renderTemplate('p/main');
 	}
 
