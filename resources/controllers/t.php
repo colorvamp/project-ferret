@@ -89,6 +89,7 @@
 		$TEMPLATE['taskOB']  = $taskOB;
 		$TEMPLATE['PAGE.H1'] = $projectOB['projectName'];
 		$TEMPLATE['PAGE.DESCRIPTION'] = $projectOB['projectDescription'];
+		$TEMPLATE['PAGE.TITLE'] = $taskOB['taskName'];
 		return common_renderTemplate('t/profile');
 	}
 
@@ -111,6 +112,13 @@
 		if( isset($taskOB) ){
 			if( isset($taskOB['taskTags']) && $taskOB['taskTags'] ){$taskOB['html.tags'] = implode(',',$taskOB['taskTags']);}
 			$TEMPLATE['taskOB'] = $taskOB;
+
+			$projectOB = $projectTB->getByID($taskOB['taskProjectID']);
+			$TEMPLATE['PAGE.H1'] = $projectOB['projectName'];
+			$TEMPLATE['PAGE.DESCRIPTION'] = $projectOB['projectDescription'];
+			$TEMPLATE['PAGE.TITLE'] = $taskOB['taskName'];
 		}
+
+		common_loadScript('{%w.indexURL%}/r/js/coredown.js');
 		return common_renderTemplate('t/save');
 	}

@@ -1,6 +1,6 @@
 <?php
-	function presentation_project_url($projectOB = []){
-		return $GLOBALS['w.indexURL'].'/p/'.$projectOB['_id'];
+	function presentation_project_url($projectOB = [],$mode = ''){
+		return $GLOBALS['w.indexURL'].'/p/'.$projectOB['_id'].($mode ? '/'.$mode : '');
 	}
 	function presentation_project_save_url($projectOB = []){
 		return $GLOBALS['w.indexURL'].'/p/save/'.$projectOB['_id'];

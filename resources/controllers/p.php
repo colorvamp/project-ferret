@@ -1,6 +1,6 @@
 <?php
 	function p_main($id = false){
-		if( $id ){return p_profile($id);}
+		if( $id ){return call_user_func_array('p_profile',func_get_args());}
 		$TEMPLATE  = &$GLOBALS['TEMPLATE'];
 		$projectTB = new projectTB();
 		$userID    = strval($GLOBALS['user']['_id']);
@@ -15,7 +15,7 @@
 		return common_renderTemplate('p/main');
 	}
 
-	function p_profile($id = false){
+	function p_profile($id = false,$mode = ''){
 		$TEMPLATE  = &$GLOBALS['TEMPLATE'];
 		$projectTB = new projectTB();
 		$taskTB    = new taskTB();
@@ -29,14 +29,23 @@
 				common_r();
 		}}
 
-		$taskOBs = $taskTB->getWhere(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open']);
+		$query = ['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open'];
+		if( $mode == 'closed' ){$query = ['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'closed'];}
+
+		$taskOBs = $taskTB->getWhere($query);
 		foreach( $taskOBs as &$taskOB ){
 			$taskOB['url.task'] = presentation_task_url($taskOB);
 		}
 
+		$TEMPLATE['tasks.active.count']   = $taskTB->count(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open']);
+		$TEMPLATE['tasks.assigned.count'] = $taskTB->count(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open','taskUser.assigned'=>$GLOBALS['user']['_id']]);
+		$TEMPLATE['tasks.closed.count']   = $taskTB->count(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'closed']);
+
 		$projectOB['url.project.save']   = presentation_project_save_url($projectOB);
 		$projectOB['url.project.config'] = presentation_project_config_url($projectOB);
 
+		$TEMPLATE['url.tasks.active'] = presentation_project_url($projectOB);
+		$TEMPLATE['url.tasks.closed'] = presentation_project_url($projectOB,'closed');
 		$TEMPLATE['taskOBs']    = $taskOBs;
 		$TEMPLATE['projectOB']  = $projectOB;
 		$TEMPLATE['PAGE.H1']    = $projectOB['projectName'];

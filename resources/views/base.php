@@ -8,6 +8,7 @@
 	<link href="{%w.indexURL%}/r/css/font-awesome.min.css" rel="stylesheet"/>
 	<script type="text/javascript" src="{%w.indexURL%}/r/js/coreJS.404.js"></script>
 	<script type="text/javascript" src="{%w.indexURL%}/r/js/dropdown.js"></script>
+	{%PAGE.SCRIPT%}
 </head>
 <body>
 	<header>
