@@ -13,6 +13,7 @@
 			if( !($taskOB = $taskTB->getByID($_POST['_id'])) ){common_r();}
 			$_POST['_id'] = $taskOB['_id'];
 			if( isset($_POST['taskAssign']) ){
+				/* Asignamos el valor en la posición correcta */
 				$_POST['taskUser']['assigned'] = $_POST['taskAssign'];
 				$mailAssign = true;
 			}
@@ -56,13 +57,35 @@
 		$shoutTB   = new shoutTB();
 		if( !($taskOB = $taskTB->getByID($id)) ){common_r('',404);}
 		$projectOB = $projectTB->getByID($taskOB['taskProjectID']);
+		$taskOB['url.task']      = presentation_task_url($taskOB);
+		$taskOB['url.task.edit'] = presentation_task_save_url($taskOB);
 
 		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
 			case 'shout.save':
 				$_POST['shoutChannel'] = $taskOB['_id'];
-				$shoutOB = $shoutTB->save($_POST);
+				$shoutOB = $_POST;
+				$r = $shoutTB->save($shoutOB);
 				if( isset($shoutOB['errorDescription']) ){print_r($shoutOB);exit;}
-				//FIXME: enviar correos
+				if( isset($projectOB['projectUsers']) && $projectOB['projectUsers'] ){
+					$userIDs   = array_keys($projectOB['projectUsers']);
+					$userOBs   = users_getByIDs($userIDs);
+					$userMails = array_map(function($n){return $n['userMail'];},$userOBs);
+					$userMails = array_unique(array_values($userMails));
+				}
+
+				if( isset($userMails) && $userMails ){
+					include_once('api.mailing.php');
+					/* INI-Envio de correo */
+					$config = json_decode(file_get_contents('../db/mail.json'),1);
+					$blob   = common_loadSnippet('mail/es.mail.task.comment',[ 'taskOB'=>$taskOB,'userOB'=>$GLOBALS['user'],'shoutOB'=>$shoutOB ]);
+					$subj   = $taskOB['taskName'];
+					$r = mailing_send($config+[
+						 'to'=>implode(',',$userMails)
+					],$subj,$blob);
+					if( isset($r['errorDescription']) ){print_r($r);exit;}
+					/* END-Envio de correo */
+				}
+
 				common_r();
 		}}
 
@@ -83,9 +106,18 @@
 
 		//FIXME: el paginador
 		$shoutOBs = $shoutTB->getWhere(['shoutChannel'=>$taskOB['_id']]);
+		/* INI-Resolvemos los usuarios */
+		$userIDs = array_map(function($n){if( !isset($n['shoutAuthor']) ){return '';}return $n['shoutAuthor'];},$shoutOBs);
+		$userIDs = array_diff($userIDs,['']);
+		$userIDs = array_unique(array_values($userIDs));
+		$userOBs = users_getByIDs($userIDs);
+		foreach( $shoutOBs as &$shoutOB ){
+			if( !isset($shoutOB['shoutAuthor']) || !isset($userOBs[strval($shoutOB['shoutAuthor'])]) ){continue;}
+			$shoutOB['shoutAuthor'] = $userOBs[strval($shoutOB['shoutAuthor'])];
+		}
+		/* END-Resolvemos los usuarios */
 		$TEMPLATE['shoutOBs'] = $shoutOBs;
 
-		$taskOB['url.task.edit'] = presentation_task_save_url($taskOB);
 		$TEMPLATE['taskOB']  = $taskOB;
 		$TEMPLATE['PAGE.H1'] = $projectOB['projectName'];
 		$TEMPLATE['PAGE.DESCRIPTION'] = $projectOB['projectDescription'];
@@ -107,6 +139,14 @@
 				//$url = presentation_assis_hotel_url($r);
 				//common_r($url);
 				common_r();
+			case 'user.search':
+				$usersTB = new usersTB();
+				$userOBs = $usersTB->search(
+					 $_POST['criteria']
+					//,['match'] //FIXME: los usuarios del proyecto
+				);
+print_r($userOBs);
+exit;
 		}}
 
 		if( isset($taskOB) ){
@@ -120,5 +160,6 @@
 		}
 
 		common_loadScript('{%w.indexURL%}/r/js/coredown.js');
+		common_loadScript('{%w.indexURL%}/r/js/coredown.mentions.js');
 		return common_renderTemplate('t/save');
 	}

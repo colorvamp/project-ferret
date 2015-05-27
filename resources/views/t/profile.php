@@ -86,7 +86,8 @@
 					<img src="{%w.indexURL%}/images/avatar">
 				</div>
 				<div class="wrapper">
-					{%shoutText%}
+					<h4>{%shoutAuthor_userName%}</h4>
+					<div>{%shoutText%}</div>
 				</div>
 			</article>
 		{%/shoutOBs%}

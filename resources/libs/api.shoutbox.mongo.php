@@ -41,6 +41,7 @@
 			if( !isset($data['shoutDate']) ){$data['shoutDate'] = date('Y-m-d');}
 			if( !isset($data['shoutTime']) ){$data['shoutTime'] = date('H:i:s');}
 			if( !isset($data['shoutStamp']) ){$data['shoutStamp'] = time();}
+			if( !isset($data['shoutAuthor']) && isset($GLOBALS['user']['_id']) ){$data['shoutAuthor'] = $GLOBALS['user']['_id'];}
 
 			if(strpos($data['shoutText'],'<') === false){
 				if(!function_exists('markdown_toHTML')){include_once('inc.markdown.php');}

@@ -1,5 +1,7 @@
 <?php
-	if(!isset($GLOBALS['api']['users'])){$GLOBALS['api']['users'] = [];}
+	if( !isset($GLOBALS['api']['users']) ){$GLOBALS['api']['users'] = [];}
+	if( !class_exists('_mongo') ){include_once('classes/class._mongo.php');}
+
 	$GLOBALS['api']['users'] = array_merge([
 		'db.name'=>'projectferret',
 		'table.users'=>'users',
@@ -30,6 +32,15 @@
 	];
 	/* END-mongo indexes */
 
+
+	class usersTB extends _mongo{
+		public $table = 'users';
+		public $search_fields = ['userName','userNick','userMail'];
+		public function validate(&$data = [],&$oldData = []){
+			
+			return $data;
+		}
+	}
 	
 
 	function users_set_database($dbname = ''){
