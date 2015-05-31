@@ -26,11 +26,55 @@
 				$r = users_save(['userMail'=>$_POST['userMail']]+$GLOBALS['user']);
 				//FIXME: reenviar correo de confirmación
 				common_r();
+			case 'user.avatar':
+				if( !$_FILES ){common_r();}
+				$file = array_shift($_FILES);
+				if( $file['error'] ){common_r();}
+				$r = users_avatar_save($GLOBALS['user']['_id'],$file['tmp_name']);
+				if( isset($r['errorDescription']) ){
+					print_r($r);
+					exit;
+				}
+				common_r();
+exit;
 		}}
 
 
 		$TEMPLATE['PAGE.TITLE'] = 'Perfil de usuario';
 		common_renderTemplate('u/profile.me');
+	}
+
+	function u_avatar($id = false,$size = false){
+		if($id && ($userOB = users_getByID($id)) && ($imagePath = users_avatar_get($id,$size)) ){
+			$r = stat($imagePath);
+			$m = date('D, d M Y H:m:s \G\M\T',$r['mtime']);
+			header('Last-Modified: '.$m);
+			header('Cache-Control: max-age=31557600');
+			header_remove('Pragma');
+			if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])){$d = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);$k = strtotime($m);if($d == $k){header('HTTP/1.1 304 Not Modified');exit;}}
+
+			header('Content-Type: image/jpeg');
+			readfile($imagePath);exit;
+		}
+
+		include_once('inc.graph.php');
+		$gradient = graph_gradient('8cc277','6fa85b',6);
+
+		$svg = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
+		$svg .= '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'.PHP_EOL;
+		$svg .= '<svg width="48" height="48" version="1.1" xmlns="http://www.w3.org/2000/svg">'.PHP_EOL;
+		for($i = 0; $i < 48; $i+=6){
+			for($j = 0; $j < 48; $j+=6){
+				$index = array_rand($gradient); /* Get a random index */
+				$color = $gradient[$index]; /* Grab a color */
+				$svg .= '<rect x="'.$i.'" y="'.$j.'" width="6" height="6" style="fill:#'.$color.';" />'.PHP_EOL;
+			}
+		}
+		$svg .= '</svg>'.PHP_EOL;
+
+		header('Content-type: image/svg+xml');
+		echo $svg;
+		exit;
 	}
 
 	function u_login(){

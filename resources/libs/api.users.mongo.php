@@ -7,7 +7,8 @@
 		'table.users'=>'users',
 		'reg.mail.clear'=>'/[^a-z0-9\._\+\-\@]*/',
 		'reg.mail.match'=>'/^[a-z0-9\._\+\-]+@[a-z0-9\.\-]+\.[a-z]{2,6}$/',
-		],$GLOBALS['api']['users']);
+		'dir.users'=>'../db/api.users/'
+	],$GLOBALS['api']['users']);
 
 	/* INI-mongo tables */
 	$GLOBALS['api']['mongo']['tables']['users'] = [
@@ -176,3 +177,40 @@
 		return $salt;
 	}
 
+	function users_avatar_get($id = false,$size = false){
+		$userPath = $GLOBALS['api']['users']['dir.users'].$id.'/avatar/';
+		if( !file_exists($userPath) ){return false;}
+		$imagePath = $userPath.str_replace('.','',$size).'.jpeg';
+		if(!file_exists($imagePath)){
+			$imagePath = $userPath.'orig.jpeg';
+			if(!file_exists($imagePath)){return false;}
+		}
+		return $imagePath;
+	}
+	function users_avatar_save($id = false,$filePath = ''){
+		include_once('inc.images.php');
+		$res = image_getResource($filePath);if(!$res){return ['errorDescription'=>'NOT_AN_IMAGE','file'=>__FILE__,'line'=>__LINE__];}
+		$userPath = $GLOBALS['api']['users']['dir.users'].$id.'/avatar/';
+		if(!file_exists($userPath)){$oldmask = umask(0);$r = @mkdir($userPath,0777,1);umask($oldmask);}
+		$origPath = $userPath.'orig';
+		$oldmask = umask(0);
+		$r = @rename($filePath,$origPath);
+		chmod($origPath,0777);
+
+		/* Salvamos la imagen original en png y jpeg */
+		$r = image_convert($origPath,'jpeg');
+		$r = image_convert($origPath,'png');
+		/* Realizamos los diferentes tamaños */
+		$sizes = ['32','64','128','256','306'];$overWrite = true;
+		foreach($sizes as $k=>$size){
+			$destPath = $userPath.$size.'.jpeg';
+			if($overWrite === false && file_exists($destPath)){continue;}
+			if(!is_numeric($size[0])){unset($sizes[$k]);continue;}
+			if(strpos($size,'x') !== false){$r = image_thumb($res,$destPath,$size);continue;}
+			$r = image_square($res,$destPath,$size);
+		}
+		umask($oldmask);
+
+		imagedestroy($res);
+		return true;
+	}

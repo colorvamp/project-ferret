@@ -16,5 +16,7 @@
 	}
 
 	if( $userIsLogged ){
+		$GLOBALS['user']['src.user.32'] = presentation_user_src($GLOBALS['user'],32);
+		$GLOBALS['user']['src.user.48'] = presentation_user_src($GLOBALS['user'],48);
 		$TEMPLATE['user'] = $GLOBALS['user'];
 	}

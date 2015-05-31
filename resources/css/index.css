@@ -89,8 +89,8 @@ ul.table.radio > li > div:first-child{width:1px;}
 /* INI-node */
 .node{position:relative;padding:10px;background:white;}
 .node + .node{border-top:1px solid #eee;}
-.node h1{font-size:26px;padding-bottom:10px;}
-.node h2{font-size:22px;padding-bottom:10px;}
+.node h1{font-size:26px;}
+.node h2{font-size:22px;}
 .node h2 > *{font-size:inherit;color:inherit;}
 .node p{color:#777;}
 .node header{padding-bottom:20px;}
