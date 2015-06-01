@@ -42,12 +42,20 @@
 			$GLOBALS['inc']['common']['replace']++;
 			if($GLOBALS['inc']['common']['replace'] > 20){echo 'max replaces';exit;}
 
-			$blob = preg_replace_callback('/{%#([a-zA-Z0-9_\.]+)%}(.*?){%\/\1%}/sm',function($m) use (&$pool){
-				if( ($word = common_findKword($m[1],$pool)) === false || !$word ){return '';}
+			$blob = preg_replace_callback('!{%(?<operator>[#\^])(?<word>[a-zA-Z0-9_\.]+)%}(?<snippet>.*?){%/\2%}!sm',function($m) use (&$pool){
+				if( ($word = common_findKword($m['word'],$pool)) === false || !$word ){
+					if( $m['operator'] == '^' ){return $m['snippet'];}
+					return '';
+				}
+				if( $m['operator'] == '^' ){
+					if( !$word ){return $m['snippet'];}
+					return '';
+				}
+
 				/* INI-Soporte para Arrays */
 				if( is_array($word) ){
 					$blob    = '';
-					$snippet = $m[2];
+					$snippet = $m['snippet'];
 					foreach( $word as $elem ){
 						if( !is_array($elem) ){$elem = ['.'=>$elem];}
 						$blob .= common_replaceInTemplate($snippet,$elem);
@@ -55,7 +63,7 @@
 					return $blob;
 				}
 				/* END-Soporte para Arrays */
-				return $m[2];
+				return $m['snippet'];
 			},$blob);
 		}
 

@@ -37,9 +37,16 @@
 		<div>
 			{%#taskOBs%}
 				<div class="node task">
+					{%#src.task.48%}
+					<div class="image s32">
+						<img src="{%src.task.48%}">
+					</div>
+					{%/src.task.48%}
+					{%^src.task.48%}
 					<div class="image s32">
 						<i>{%taskPriority%}</i>
 					</div>
+					{%/src.task.48%}
 					<div class="wrapper">
 						<h4><a href="{%url.task%}">{%taskName%}</a></h4>
 						<div class="tags">

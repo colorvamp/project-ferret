@@ -33,7 +33,16 @@
 		if( $mode == 'closed' ){$query = ['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'closed'];}
 
 		$taskOBs = $taskTB->getWhere($query);
+		$userIDs = array_map(function($n){
+			return isset($n['taskUser']['assigned']) ? $n['taskUser']['assigned'] : '';
+		},$taskOBs);
+		$userOBs = users_getByIDs($userIDs);
+
 		foreach( $taskOBs as &$taskOB ){
+			if( isset($taskOB['taskUser']['assigned'],$userOBs[strval($taskOB['taskUser']['assigned'])]) ){
+				$userOB = $userOBs[strval($taskOB['taskUser']['assigned'])];
+				$taskOB['src.task.48'] = presentation_user_src($userOB,48);
+			}
 			$taskOB['url.task'] = presentation_task_url($taskOB);
 		}
 
