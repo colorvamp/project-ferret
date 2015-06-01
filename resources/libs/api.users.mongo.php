@@ -87,6 +87,7 @@
 			if(is_string($id)){$id = (preg_match('/[a-zA-Z0-9]+/',$id) && strlen($id) == 24) ? new MongoId($id) : intval($id);}
 			return $id;
 		},$ids);
+		$ids = array_values($ids);
 		if( !$ids ){return [];}
 		$whereClause = ['_id'=>['$in'=>$ids]];
 		return users_getWhere($whereClause,$params);
