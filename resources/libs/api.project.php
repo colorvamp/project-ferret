@@ -75,7 +75,9 @@
 			}
 			if( is_string($data['taskUser']['assigned']) ){$data['taskUser']['assigned'] = new MongoId($data['taskUser']['assigned']);}
 
-
+			foreach( $data['taskTags'] as &$taskTag ){
+				$taskTag = strings_toURL($taskTag);
+			}
 			/* INI-Convertimos el texto a markdown */
 			if( isset($data['taskDescription']) && strpos($data['taskDescription'],'<') === false ){
 				if(!function_exists('markdown_toHTML')){include_once('inc.markdown.php');}

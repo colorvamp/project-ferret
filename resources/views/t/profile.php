@@ -4,7 +4,7 @@
 			<ul class="table radio">
 				<li><div><i class="fa fa-folder-open"></i></div><div>id: {%taskOB__id%}</div></li>
 				<li><div><i class="fa fa-list-ol"></i></div><div>prioridad: {%taskOB_taskPriority%}</div></li>
-				<li><div><i class="fa fa-clock-o"></i></div><div>fecha: {%taskOB_taskStamp%}</div></li>
+				<li><div><i class="fa fa-clock-o"></i></div><div>fecha: {%taskOB_html.time.created%}</div></li>
 				<li><div><i class="fa fa-check"></i></div>
 					<div>status: 
 						<div class="inline-block dropdown-toggle">{%taskOB_taskStatus%} <i class="fa fa-caret-down"></i>

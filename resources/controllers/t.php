@@ -59,6 +59,7 @@
 		$projectOB = $projectTB->getByID($taskOB['taskProjectID']);
 		$taskOB['url.task']      = presentation_task_url($taskOB);
 		$taskOB['url.task.edit'] = presentation_task_save_url($taskOB);
+		$taskOB['html.time.created'] = strtotime('Y-m-d H:i:s',$taskOB['taskTime']);
 
 		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
 			case 'shout.save':
