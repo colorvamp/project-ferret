@@ -7,6 +7,7 @@
 	include_once('api.project.php');
 	include_once('api.users.mongo.php');
 	common_setBase('base');
+	$GLOBALS['images']['sizes'] = ['48','128'];
 
 	$userIsLogged = users_isLogged();
 	$loginURL     = presentation_user_login();

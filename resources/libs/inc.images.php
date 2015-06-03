@@ -8,8 +8,11 @@
 	function image_getResourceFromBlob($blob = ''){
 		return imagecreatefromstring($blob);
 	}
+	function image_resource_destroy($res){return imagedestroy($res);}
+	function image_resource_fromBlob($blob = ''){return imagecreatefromstring($blob);}
 	function image_resource_resize($res,$size = false){
-		if(!is_numeric($size[0])){return false;}
+		if( $size == 'orig' ){return $res;}
+		if( !is_numeric($size[0]) && !is_numeric($size) ){return false;}
 		if(strpos($size,'x') !== false){return image_resource_scale($res,$size);}
 		return image_resource_square($res,$size);
 	}
@@ -35,13 +38,6 @@
 		return $res;//*/
 	}
 
-
-
-
-
-
-
-
 	function image_mimeDecider($mime,$path){
 		if(!function_exists('imagecreatefromjpeg')){echo 'No está instalada la libreria php5_gd';exit;}
 		switch($mime){
@@ -66,21 +62,18 @@
 	}
 
 	function image_resize($imagePath,$thumbname,$maxWidth,$maxHeight,$adjust='max'){
-		$image = image_getResource($imagePath);
+		$imgProp = getimagesize($imagePath);
+		$image = image_mimeDecider($imgProp['mime'],$imagePath);
 		$image = imageResource_resize($image,$maxWidth,$maxHeight,$adjust);
 		imagejpeg($image,dirname($imagePath).'/'.$thumbname,90);
 		return true;
 	}
+
 	function image_crop($imagePath,$thumbname,$width,$height){
-		$image = image_getResource($imagePath);
+		$imgProp = getimagesize($imagePath);
+		$image = image_mimeDecider($imgProp['mime'],$imagePath);
 		$image = imageResource_crop($image,$width,$height);
 		imagejpeg($image,dirname($imagePath).'/'.$thumbname,90);
-		return true;
-	}
-	function image_toSize($imagePath,$size){
-		$image = image_getResource($imagePath);
-		$image = imageResource_processSize($image,$size);
-		imagejpeg($image,dirname($imagePath).'/'.$size.'.jpeg',90);
 		return true;
 	}
 
@@ -107,7 +100,7 @@
 	}
 
 	function imageResource_resize($res,$maxWidth = 0,$maxHeight = 0,$adjust='max'){
-		$imgWidth = imagesx($res);
+		$imgWidth  = imagesx($res);
 		$imgHeight = imagesy($res);
 		if($imgWidth === false || $imgHeight === false){return false;}
 
@@ -150,17 +143,19 @@
 		if(!is_numeric($size[0])){unset($sizes[$k]);continue;}
 		if(strpos($size,'x') !== false){list($w,$h) = explode('x',$size);$im = imageResource_resize($im,$w,$h,'min');if($w != 0 && $h != 0){$im = imageResource_crop($im,$w,$h);}return $im;}
 		if(strpos($size,'m') !== false){list($w,$h) = explode('m',$size);$im = imageResource_resize($im,$w,$h,'min');if($w != 0 && $h != 0){$im = imageResource_crop($im,$w,$h);}return $im;}
-		$im = imageResource_resize($im,$size,$size,'min');$im = imageResource_crop($im,$size,$size);return $im;
+		//$r = gallery_helper_square($res,$destPath,$size);
 	}
 
 	function imageResource_save($im,$path){
+
 		//FIXME: hacerlo con strrpos
 		$nImagePath = preg_replace('/(jpg$|jpeg$|png$|gif$)/i','',$path);
 		$ext = substr($path,strlen($nImagePath));
 		switch($ext){
-			case 'jpg':case 'JPG':imagejpeg($im,$nImagePath.'jpg',90);break;
+			case 'jpg': case 'JPG':imagejpeg($im,$nImagePath.'jpg',90);break;
 			case 'jpeg':case 'JPEG':imagejpeg($im,$nImagePath.'jpeg',90);break;
-			case 'png':case 'PNG':imagepng($im,$nImagePath.'png',9);break;
+			case 'png': case 'PNG':imagepng($im,$nImagePath.'png',9);break;
+			case 'gif': case 'GIF':imagegif($im,$nImagePath.'gif');break;
 		}
 		return $im;
 	}
@@ -180,11 +175,36 @@
 		return true;
 	}
 
+	function image_gif_is_animated($path = ''){
+
+		$filecontents = file_get_contents($path);
+		if( !$filecontents ){echo 'no hay fichero: '.$path;}
+		$str_loc = 0;
+		$count   = 0;
+
+		# There is no point in continuing after we find a 2nd frame
+		while ($count < 2){
+			$a = strpos($filecontents,"\x00\x21\xF9\x04", $str_loc);
+			if( !$a ){break;}
+
+			$str_loc = $a + 1;
+			$b  = strpos($filecontents,"\x00\x2C",$str_loc);
+			if( !$b ){break;}
+			else{
+				if( $a + 8 == $b ){$count++;}
+				$str_loc = $b + 1;
+			}
+		}
+		if ($count > 1){return(true);}
+		else{return(false);}
+		// gif is animated when it has two or more frames
+		return ($count >= 2);
+	}
+
 	function image_square($res,$dPath,$size){if(is_dir($dPath)){return false;}$res = imageResource_resize($res,$size,$size,'min');$res = imageResource_crop($res,$size,$size);$r = imageResource_save($res,$dPath);$r = imagedestroy($res);return true;}
 	function image_thumb($res,$dPath,$size){if(is_dir($dPath)){return false;}list($w,$h) = explode('x',$size);$res = imageResource_resize($res,$w,$h,'min');if($w != 0 && $h != 0){$res = imageResource_crop($res,$w,$h);}$r = imageResource_save($res,$dPath);$r = imagedestroy($res);return true;}
 	function image_thumb_p($res,$dPath,$size){if(is_dir($dPath)){return false;}list($w,$h) = explode('p',$size);$res = imageResource_resize($res,$w,$h,'max');$r = imageResource_save($res,$dPath);$r = imagedestroy($res);return true;}
 	function image_tooLarge($iPath,$imgProp){
-		if(!file_exists('/usr/bin/convert')){return false;}
 		$a = pathinfo($iPath);
 		$resPath = $a['dirname'].'/'.$a['basename'].'.jpeg';
 		if(is_dir($resPath)){return false;}
@@ -193,4 +213,4 @@
 		$res = image_mimeDecider('image/jpeg',$resPath);
 		return $res;
 	}
-
+?>

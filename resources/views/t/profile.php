@@ -60,9 +60,38 @@
 					</div>
 				</li>
 			</ul>
-			<p>{%taskOB_taskDescription%}</p>
+			<div class="description">{%taskOB_taskDescription%}</div>
+			<div>
+				{%#imageOBs%}
+				<a href="{%url.image%}" target="_black">
+					<img src="{%src.image.128%}">
+				</a>
+				{%/imageOBs%}
+			</div>
 			<div class="btn-group">
 				<a class="btn" href="{%taskOB_url.task.edit%}"><i class="fa fa-edit"></i> Editar</a>
+				<div class="btn dropdown-toggle"><i class="fa fa-image"></i> Imágenes
+					<div class="dropdown-menu padded">
+						<h4><i class="fa fa-image"></i> Imágenes</h4>
+						<p>Añadir una imagen</p>
+						<form method="post" enctype="multipart/form-data">
+							<input type="hidden" name="subcommand" value="image.save">
+							<ul class="table align-top">
+								<li><div>Nombre</div><div><input type="text" name="imageName" placeholder="Nombre de la imagen"></div></li>
+								<li><div>Descripción</div><div><textarea name="imageDescription" placeholder="Descripción de la imagen"></textarea></div></li>
+								<li><div>Tags</div><div><input type="text" name="imageTags" placeholder="Tags de la imagen"></div></li>
+								<li>
+									<div>Archivo</div>
+									<div><input type="file" name="imageFile"></div>
+								</li>
+							</ul>
+							<div class="btn-group right">
+								<div class="btn btn-close">Cerrar</div>
+								<button class="btn"><i class="fa fa-save"></i> Subir</button>
+							</div>
+						</form>
+					</div>
+				</div>
 				<div class="btn dropdown-toggle"><i class="fa fa-trash"></i> Eliminar tarea
 					<div class="dropdown-menu padded">
 						<h4><i class="fa fa-trash"></i> Eliminar tarea</h4>

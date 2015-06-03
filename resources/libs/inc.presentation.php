@@ -9,6 +9,14 @@
 		return $GLOBALS['w.indexURL'].'/p/config/'.$projectOB['_id'];
 	}
 
+	/* INI-Images */
+	function presentation_image_url($imageOB = []){
+		return $GLOBALS['w.indexURL'].'/i/'.$imageOB['_id'];
+	}
+	function presentation_image_src($imageOB = [],$size = false){
+		return $GLOBALS['w.indexURL'].'/i/src/'.$imageOB['_id'].'.jpeg'.($size ? '?s='.$size : '');
+	}
+	/* END-Images */
 
 	function presentation_task_url($taskOB = []){
 		return $GLOBALS['w.indexURL'].'/t/'.$taskOB['_id'];

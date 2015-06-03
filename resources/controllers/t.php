@@ -51,6 +51,7 @@
 
 	function t_profile($id = false){
 		include_once('api.shoutbox.mongo.php');
+		include_once('inc.mongo.images.php');
 		$TEMPLATE  = &$GLOBALS['TEMPLATE'];
 		$projectTB = new projectTB();
 		$taskTB    = new taskTB();
@@ -60,8 +61,20 @@
 		$taskOB['url.task']      = presentation_task_url($taskOB);
 		$taskOB['url.task.edit'] = presentation_task_save_url($taskOB);
 		$taskOB['html.time.created'] = date('Y-m-d H:i:s',$taskOB['taskStamp']);
+		$mongoimages = new mongoimages();
 
 		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
+			case 'image.save':
+				if( !isset($_POST['imageName']) ){common_r();}
+				if( !$_FILES ){common_r();}
+
+				$file    = array_shift($_FILES);
+				$imageOB = $_POST;
+				$imageOB['imageObject'] = ['_id'=>$taskOB['_id'],'type'=>'task'];
+				$path    = $file['tmp_name'];
+				$r = $mongoimages->blob_store($imageOB,$path);
+				if( isset($r['errorDescription']) ){print_r($r);exit;}
+				common_r();
 			case 'shout.save':
 				$_POST['shoutChannel'] = $taskOB['_id'];
 				$shoutOB = $_POST;
@@ -104,6 +117,15 @@
 		if( isset($taskOB['taskUser']['assigned'],$userOBs[strval($taskOB['taskUser']['assigned'])]) ){
 			$taskOB['html.user.assigned'] = '<a href="">'.$userOBs[strval($taskOB['taskUser']['assigned'])]['userName'].'</a>'.PHP_EOL;
 		}
+
+		/* INI-Imagenes */
+		$imageOBs = $mongoimages->getByObjectID($taskOB['_id']);
+		foreach( $imageOBs as &$imageOB ){
+			$imageOB['url.image']     = presentation_image_url($imageOB);
+			$imageOB['src.image.128'] = presentation_image_src($imageOB,128);
+		}
+		$TEMPLATE['imageOBs'] = $imageOBs;
+		/* END-Imagenes */
 
 		//FIXME: el paginador
 		$shoutOBs = $shoutTB->getWhere(['shoutChannel'=>$taskOB['_id']]);

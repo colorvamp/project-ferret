@@ -52,6 +52,7 @@ ul.table > li:nth-child(2n+1){background:#f7f7f7;}
 ul.table > li.header{background:transparent;}
 ul.table > li.header > div{padding-top:10px;padding-bottom:10px;color:#222;border-bottom:1px solid #eee;}
 ul.table.radio > li > div:first-child{width:1px;}
+ul.table.align-top > li > div{vertical-align:top;}
 /* INI-buttons */
 .btn{position:relative;display:inline-block;font-size:var(--control-font-size);line-height:16px;padding:4px 10px 3px 10px;margin-bottom:2px;border-radius:2px;background:#0997d5;color:white;box-shadow:0 2px 0 #088ac2;cursor:default;vertical-align:middle;}
 .btn:hover{color:white;}
