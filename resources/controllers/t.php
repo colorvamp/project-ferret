@@ -143,7 +143,7 @@
 		/* INI-Imagenes */
 		$imageOBs = $mongoimages->getByObjectID($taskOB['_id']);
 		foreach( $imageOBs as &$imageOB ){
-			$imageOB['url.image']     = presentation_image_url($imageOB);
+			$imageOB['url.image']     = presentation_image_src($imageOB);
 			$imageOB['src.image.128'] = presentation_image_src($imageOB,128);
 		}
 		$TEMPLATE['imageOBs'] = $imageOBs;
