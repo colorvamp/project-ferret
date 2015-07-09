@@ -63,7 +63,29 @@
 		$taskOB['html.time.created'] = date('Y-m-d H:i:s',$taskOB['taskStamp']);
 		$mongoimages = new mongoimages();
 
-		if(isset($_POST['subcommand'])){switch($_POST['subcommand']){
+		if( isset($_POST['subcommand']) ){switch($_POST['subcommand']){
+			case 'part.save':
+				if( !isset($_POST['partName']) || !$_POST['partName'] ){common_r();}
+				$id = uniqid();
+				$taskOB['taskParts'][$id] = [
+					 'id'=>$id
+					,'partName'=>$_POST['partName']
+					,'partStatus'=>'undone'
+					,'partStamp'=>time()
+				];
+				$taskTB->save($taskOB);
+				common_r();
+			case 'part.update':
+				foreach( $taskOB['taskParts'] as &$part ){
+					$part['partStatus'] = 'undone';
+				}
+				foreach( $_POST as $k=>$v ){
+					if( isset($taskOB['taskParts'][$k]) && $v == 'on' ){
+						$taskOB['taskParts'][$k]['partStatus'] = 'done';
+					}
+				}
+				$taskTB->save($taskOB);
+				common_r();
 			case 'image.save':
 				if( !isset($_POST['imageName']) ){common_r();}
 				if( !$_FILES ){common_r();}
@@ -126,6 +148,15 @@
 		}
 		$TEMPLATE['imageOBs'] = $imageOBs;
 		/* END-Imagenes */
+
+		/* INI-Parts */
+		if( isset($taskOB['taskParts']) ){
+			$taskOB['display.parts'] = true;
+			foreach( $taskOB['taskParts'] as &$part ){
+				if( $part['partStatus'] == 'done' ){$part['partChecked'] = 'checked="checked"';}
+			}
+		}
+		/* END-Parts */
 
 		//FIXME: el paginador
 		$shoutOBs = $shoutTB->getWhere(['shoutChannel'=>$taskOB['_id']]);

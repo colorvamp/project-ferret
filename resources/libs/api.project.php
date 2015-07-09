@@ -24,13 +24,14 @@
 		,'taskUser'=>'TEXT'
 		,'taskStamp'=>'TEXT'
 		,'taskPriority'=>'TEXT'
+		,'taskParts'=>'TEXT'
 	];
 	/* END-mongo tables */
 
 	class projectTB extends _mongo{
 		public $table = 'project';
 		public $search_fields = ['projectName'];
-		public function validate(&$data = [],&$oldData = []){
+		function validate(&$data = [],&$oldData = []){
 			if( !function_exists('strings_toURL') ){include_once('inc.strings.php');}
 			if( isset($data['projectName']) ){
 				$data['projectNameFixed'] = strings_toURL($data['projectName']);
@@ -45,7 +46,7 @@
 	class taskTB extends _mongo{
 		public $table = 'task';
 		public $search_fields = ['taskName'];
-		public function validate(&$data = [],&$oldData = []){
+		function validate(&$data = [],&$oldData = []){
 			if( !function_exists('strings_toURL') ){include_once('inc.strings.php');}
 			if( isset($data['taskName']) ){
 				$data['taskNameFixed'] = strings_toURL($data['taskName']);
