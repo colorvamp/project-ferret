@@ -32,7 +32,7 @@
 		$query = ['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open'];
 		if( $mode == 'closed' ){$query = ['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'closed'];}
 
-		$taskOBs = $taskTB->getWhere($query,['order'=>['taskStamp'=>-1]]);
+		$taskOBs = $taskTB->getWhere($query,['order'=>['taskUpdate'=>-1]]);
 		$userIDs = array_map(function($n){
 			return isset($n['taskUser']['assigned']) ? $n['taskUser']['assigned'] : '';
 		},$taskOBs);

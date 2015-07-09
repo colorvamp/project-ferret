@@ -23,6 +23,7 @@
 		,'taskTime'=>'INTEGER'
 		,'taskUser'=>'TEXT'
 		,'taskStamp'=>'TEXT'
+		,'taskUpdated'=>'TEXT'
 		,'taskPriority'=>'TEXT'
 		,'taskParts'=>'TEXT'
 	];
@@ -86,6 +87,8 @@
 				$data['taskDescription'] = trim($data['taskDescription']);
 			}
 			/* END-Convertimos el texto a markdown */
+
+			$data['taskUpdated'] = time();
 			return $data;
 		}
 	}
