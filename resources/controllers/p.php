@@ -44,6 +44,13 @@
 				$taskOB['src.task.48'] = presentation_user_src($userOB,48);
 			}
 			$taskOB['url.task'] = presentation_task_url($taskOB);
+
+			if( isset($taskOB['taskParts']) ){
+				foreach( $taskOB['taskParts'] as &$part ){
+					$part['html.partChecked'] = '<i class="fa fa-square-o"></i>';
+					if( $part['partStatus'] == 'done' ){$part['html.partChecked'] = '<i class="fa fa-check-square"></i>';}
+				}
+			}
 		}
 
 		$TEMPLATE['tasks.active.count']   = $taskTB->count(['taskProjectID'=>$projectOB['_id'],'taskStatus'=>'open']);

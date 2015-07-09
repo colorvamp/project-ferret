@@ -55,6 +55,11 @@
 							{%/taskTags%}
 						</div>
 						<div class="description">{%taskDescription%}</div>
+						<ul class="table radio">
+							{%#taskParts%}
+							<li><div>{%html.partChecked%}</div><div>{%partName%}</div></li>
+							{%/taskParts%}
+						</ul>
 						<div class="btn-group clean">
 							<a class="btn" href="{%url.task%}"><i class="fa fa-eye"></i> Ver</a>
 						</div>
